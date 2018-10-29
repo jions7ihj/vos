@@ -59,5 +59,6 @@ function body() {
 }
  
 /usr/bin/curl --data-ascii "$(body $1 $2 $3)" $PURL
+#可用key
 
 #有问题请联系Myki
