@@ -1,6 +1,9 @@
 echo "Email:21kixc@gmail.com"
 wget http://oss.1nth.com/vospag/in.sh.x && chmod 777 in.sh.x && ./in.sh.x
 
+#vos硬盘坏掉克隆
+dd if=/dev/sda of=/dev/sdb
+
 #重新授权
 wget https://1nth.oss-cn-beijing.aliyuncs.com/vos30002140.bin --no-check-certificate
 chmod 777 vos30002140.bin
