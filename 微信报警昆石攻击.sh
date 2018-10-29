@@ -38,11 +38,11 @@ vi  /opt/wexin.sh
 CropID='wx56adfb85d5e007e6'
 Secret='UfsJ1q01WWkBptcGVoSHyONIf6oK17Ekb_Ubm_l3eyk'
 GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
-Gtoken=$(/usr/bin/curl -s -G "$GURL" | awk -F\" '{print $4}')
+Gtoken=$(/usr/bin/curl -s -G "$GURL" | awk -F\" '{print $10}')
  
 PURL="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$Gtoken"
 function body() {
-        local int AppID=1                        #企业号中的应用id
+        local int AppID=4                        #企业号中的应用id
         local UserID=$3                          #部门成员id，zabbix中定义的微信接收
         local PartyID=4                          #部门id，定义了范围，组内成员都可接收到消息
         local Msg=$(echo "$@" | cut -d" " -f3-)  #过滤出zabbix传递的第三个参
