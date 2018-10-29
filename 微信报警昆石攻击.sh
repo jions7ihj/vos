@@ -28,24 +28,24 @@ fi
 EOF
 
 #3.微信报警
-tee  /opt/wexin.sh <<-'EOF'
+vi  /opt/wexin.sh 
 #!/bin/bash
 ###SCRIPT_NAME:weixin.sh###
 ###send message from weixin for zabbix monitor###
 ###wuhf###
-###V1-2015-08-25###
+###V1-2018-10-29###
  
-CropID='微信企业ID'
-Secret='群组密钥'
+CropID='wx56adfb85d5e007e6'
+Secret='UfsJ1q01WWkBptcGVoSHyONIf6oK17Ekb_Ubm_l3eyk'
 GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
-Gtoken=$(/usr/bin/curl -s -G "$GURL" | awk -F\" '{print $10}')
+Gtoken=$(/usr/bin/curl -s -G "$GURL" | awk -F\" '{print $4}')
  
 PURL="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$Gtoken"
 function body() {
-        local int AppID=1                        #企业号中的应用ID
-        local UserID=$1                          #部门成员ID,zabbix中定义微信接受者
-        local PartyID=3                          #部门ID,定义了范围,组内成员都可接收到消息
-        local Msg=$(echo "$@" | cut -d" " -f3-)  #过滤出zabbix中传递的第三个参数
+        local int AppID=1                        #企业号中的应用id
+        local UserID=$3                          #部门成员id，zabbix中定义的微信接收
+        local PartyID=4                          #部门id，定义了范围，组内成员都可接收到消息
+        local Msg=$(echo "$@" | cut -d" " -f3-)  #过滤出zabbix传递的第三个参
         printf '{\n'
         printf '\t"touser": "'"$UserID"\"",\n"
         printf '\t"toparty": "'"$PartyID"\"",\n"
@@ -59,5 +59,5 @@ function body() {
 }
  
 /usr/bin/curl --data-ascii "$(body $1 $2 $3)" $PURL
-EOF
+
 #有问题请联系Myki
