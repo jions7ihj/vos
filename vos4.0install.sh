@@ -11,6 +11,9 @@ export HISTFILESIZE=0
 #vos硬盘坏掉克隆
 dd if=/dev/sda of=/dev/sdb
 
+#判断系统版本
+cat /etc/redhat-release|sed -r 's/.* ([0-9]+)\..*/\1/'
+
 #重新授权
 wget https://1nth.oss-cn-beijing.aliyuncs.com/vos30002140.bin --no-check-certificate
 chmod 777 vos30002140.bin
