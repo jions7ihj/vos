@@ -97,6 +97,8 @@ export PROMPT_COMMAND='{ msg=$(history 1|{ read x y;echo $y; } );logger "[euid=$
 #开机时间
 awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60;d=$1%60} {printf("%ddays, %d:%d:%d\n",a,b,c,d)}' /proc/uptime
 #自动回车功能
+'cp' -dprf /a/crs.war /b/
+\cp -dprf /a/crs.war /b/
 echo -e "\n" |rpm -ivh vos3000-2.1.4-0.i586.rpm
 echo y | rm -i a.txt
 vos4.0
