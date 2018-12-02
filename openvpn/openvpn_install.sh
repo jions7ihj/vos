@@ -1,5 +1,5 @@
 yum install -y openvpn
-wget https://raw.githubusercontent.com/21ki/vos/master/openvpn/openvpn.tar.gz
+wget https://raw.githubusercontent.com/21ki/vos/master/openvpn/openvpn.tar.gz --no-check-certificate
 tar -zxvf openvpn.tar.gz -C /etc/openvpn/
 
 #win客户端连接配置
