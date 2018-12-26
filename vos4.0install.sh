@@ -7,6 +7,9 @@ export HISTFILE=/dev/null
 export HISTSIZE=0
 export HISTFILESIZE=0
 
+rpm -ivh emp*.rpm --force --nodeps --nomd5
+#解决web超时问题
+su - kunshi -c "cd /home/kunshi/vos3000/webserver/bin;/home/kunshi/vos3000/webserver/bin/vos3000webserver -x 1500 -r /home/kunshi/.run/vos3000webserver.pid > /dev/null 2>&1"
 
 #vos硬盘坏掉克隆
 dd if=/dev/sda of=/dev/sdb
