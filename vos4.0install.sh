@@ -188,9 +188,17 @@ wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo
 wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
 wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
 
-yum clean all
-yum makecache
-yum install -y php httpd
+#环境配置
+yum remove -y perl-DBI  jdk  mysql-libs
+yum install -y wget ntpdate glibc.i686 zip unzip crontabs sudo
+sed -i '/^SELINUX=/cSELINUX=disabled' /etc/selinux/config
+echo  "127.0.0.1 www.linknat.com" >> /etc/hosts
+wget -qO /etc/sysctl.conf https://oss.1nth.com/environment/aliyun-sysctl.conf --no-check-certificate
+ntpdate time.sicdt.com && hwclock -w
+#内核确认
+wget https://1nth.oss-cn-beijing.aliyuncs.com/kernel-2.6.32-358.el6.x86_64.rpm
+rpm -ivh kernel-2.6.32-358.el6.x86_64.rpm --oldpackage
+
 
 运行setup,打开iptables(注意：必须将ssh端口加入白名单，否则会导致连不上服务器) 还有关闭selinux
 #阿里云内网
@@ -198,10 +206,12 @@ wget http://21k.oss-cn-qingdao-internal.aliyuncs.com/vospag/vos3000-2.1.4.0.tar.
 #网络下载
 wget http://oss.1nth.com/vospag/vos3000-2.1.4.0.tar.gz
 tar -zxvf vos3000-2.1.4.0.tar.gz
+cd vos4.0/
 setenforce 0
 sh create_user_kunshi.sh
 sh create_user_kunshiweb.sh
-rpm -ivh perl-DBI-1.40-5.i386.rpm
+yum localinstall -y perl-DBI-1.40-5.i386.rpm --nogpgcheck
+rpm -qa|grep -i mysql
 rpm -ivh MySQL-server-community-5.0.96-1.rhel5.x86_64.rpm
 rpm -ivh MySQL-client-community-5.0.96-1.rhel5.x86_64.rpm
 tee /etc/my.cnf <<-'EOF'
@@ -230,29 +240,20 @@ tar zxvf apache-tomcat-7.0.23.tar.gz
 mv apache-tomcat-7.0.23 /home/kunshiweb/base/apache-tomcat
 chmod 777 jrockit-jdk1.6.0_45-R28.2.7-4.1.0-linux-x64.bin
 ./jrockit-jdk1.6.0_45-R28.2.7-4.1.0-linux-x64.bin
-看见next就回车
-
 
 cp -r /root/jrockit-jdk1.6.0_45-R28.2.7-4.1.0 /home/kunshi/base/jdk_default
 cp -r /root/jrockit-jdk1.6.0_45-R28.2.7-4.1.0 /home/kunshiweb/base/jdk_default
 rpm -ivh vos3000-2.1.4-0.i586.rpm
-eb3c5bc7-5f7e-4494-8027-0280ffffffff
-
 
 rpm -ivh emp-2.1.4-0.noarch.rpm
 rpm -ivh callservice-2.1.4-0.i586.rpm
 rpm -ivh mgc-2.1.4-0.i586.rpm
 
-
 rpm -ivh vos3000-web*.rpm
-
 
 rpm -ivh mbx3000-2.1.4-0.i586.rpm
 rpm -ivh ivr_dial-2.1.4-0.i586.rpm
-rpm -ivh callcenter-2.1.4-0.i586.rpm                ------可以不安装，没用
-
-
-安装话机服务：
+rpm -ivh callcenter-2.1.4-0.i586.rpm
 cd phoneservice/
 cp -r phoneservice /home/kunshi/
 chmod 777 /home/kunshi/phoneservice/bin/phoneservice
@@ -260,8 +261,6 @@ cp -r phoneserviced /etc/init.d/
 chmod 777 /etc/rc.d/init.d/phoneserviced
 chkconfig phoneserviced on
 service phoneserviced restart
-
-
 cd ..
 chmod 777 vos30002140.bin
 ./vos30002140.bin
@@ -272,7 +271,6 @@ mkdir /home/kunshi/license
 mv *_license.dat /home/kunshi/license/license.dat
 chmod 777 -R /home/kunshi/license/
 chown kunshi:kunshi -R /home/kunshi/license/
-
 wget http://oss.1nth.com/vospag/vos2.4pag.tar.gz
 tar xzf vos2.4pag.tar.gz
 mv -f libcap.so /home/kunshi/vos3000/server/lib/libcap.so >/dev/null
@@ -285,16 +283,42 @@ chown kunshiweb:kunshiweb /etc/init.d//vos3000webct
 chmod 770 /etc/init.d/vos3000d
 chown kunshi:kunshi /etc/init.d/vos3000d
 rm -rf vos3000d vos3000webct libcap.so vos2.4pag.tar.gz
-history -c
 
+#安全
 yum install -y denyhosts httpd php
 service denyhosts restart
 chkconfig denyhosts on
-wget http://oss.1nth.com/vospag/vossafe.bin
-sh vossafe.bin
 wget -P /opt https://oss.1nth.com/MbxWatch.sh --no-check-certificate
 chmod 777 /opt/MbxWatch.sh
 echo -e "1 */1 * * * /opt/MbxWatch.sh" >> /var/spool/cron/root
+
+chkconfig httpd on
+
+sed -i 's/SS_SIP_PORT="5060,6060"/SS_SIP_PORT="2080,6060"/g' /home/kunshi/mbx3000/etc/softswitch.conf
+sed -i 's/port="8080"/port="8888"/g' /home/kunshiweb/base/apache-tomcat/conf/server.xml
+sed -i '/^Listen/cListen 2018'  /etc/httpd/conf/httpd.conf
+sed -i '/^ACCESS_UUID=/cACCESS_UUID=vos30002140' /home/kunshi/vos3000/server/etc/server.conf
+
+
+#websecurity
+wget http://oss.1nth.com/vospag/vossecurity.bin
+sh vossecurity.bin
+
+mysqladmin -u root password "xiaofan@1"
+#如果是centos6.5安装denyhosts需要python安装命令如下
+wget http://nchc.dl.sourceforge.net/project/denyhosts/denyhosts/2.6/DenyHosts-2.6.tar.gz
+tar xf DenyHosts-2.6.tar.gz
+cd DenyHosts-2.6
+python setup.py install
+cd /usr/share/denyhosts/
+cp daemon-control-dist daemon-control 
+cp denyhosts.cfg-dist denyhosts.cfg 
+chown root daemon-control
+chmod 700 daemon-control 
+ln -s /usr/share/denyhosts/daemon-control /etc/init.d/denyhosts
+chkconfig --add denyhosts
+chkconfig denyhosts on
+service denyhosts start
 
 #chkconfig * on
 for i in callcenterd callserviced empd ivrdiald mbx3000d mgcserverd phoneserviced vos3000d vos3000webct vos3000websv crond iptables httpd mysql ;do chkconfig $i on ;done
