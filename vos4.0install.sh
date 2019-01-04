@@ -121,6 +121,9 @@ error while loading shared libraries: libstdc++.so.6: cannot open shared object 
 错误
 yum whatprovides libstdc++.so.6
 yum install -y libstdc++-4.1.2-55.el5.i386
+#防火墙出错#ip_conntrack version 2.4 (8192 buckets, 65536 max) - 304 bytes per conntrack需要重启防火墙
+vi /etc/sysctl.conf net.ipv4.ip_conntrack_max = 1048576
+vi /etc/modprobe.conf options ip_conntrack hashsize=131072
 
 #yum错误
 There are unfinished transactions remaining. You might consider running yum-complete-transaction first to finish them.
