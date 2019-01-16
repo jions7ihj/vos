@@ -689,3 +689,7 @@ select user,host,password from user;
 drop user 'root'@'10.80.184.48';
 select user,host,password from mysql.user;
 
+#centos6.11 HTTP报错
+#apr_sockaddr_info_get() failed for hostname
+vi /etc/httpd/conf/httpd.conf
+#ServerName www.example.com:80  ServerName 127.0.0.1
