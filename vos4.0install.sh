@@ -298,9 +298,9 @@ echo -e "1 */1 * * * /opt/MbxWatch.sh" >> /var/spool/cron/root
 
 chkconfig httpd on
 
-sed -i 's/SS_SIP_PORT="5060,6060"/SS_SIP_PORT="2080,6060"/g' /home/kunshi/mbx3000/etc/softswitch.conf
+sed -i 's/SS_SIP_PORT="5060,6060"/SS_SIP_PORT="1980,6060"/g' /home/kunshi/mbx3000/etc/softswitch.conf
 sed -i 's/port="8080"/port="8888"/g' /home/kunshiweb/base/apache-tomcat/conf/server.xml
-sed -i '/^Listen/cListen 2018'  /etc/httpd/conf/httpd.conf
+
 sed -i '/^ACCESS_UUID=/cACCESS_UUID=vos30002140' /home/kunshi/vos3000/server/etc/server.conf
 
 
@@ -309,6 +309,8 @@ wget http://oss.1nth.com/vospag/vossecurity.bin
 sh vossecurity.bin
 
 mysqladmin -u root password "xiaofan@1"
+sed -i '/^Listen/cListen 10000'  /etc/httpd/conf/httpd.conf
+
 #如果是centos6.5安装denyhosts需要python安装命令如下
 wget http://nchc.dl.sourceforge.net/project/denyhosts/denyhosts/2.6/DenyHosts-2.6.tar.gz
 tar xf DenyHosts-2.6.tar.gz
