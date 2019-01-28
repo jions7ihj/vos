@@ -328,8 +328,12 @@ service denyhosts start
 
 #chkconfig * on
 for i in callcenterd callserviced empd ivrdiald mbx3000d mgcserverd phoneserviced vos3000d vos3000webct vos3000websv crond iptables httpd mysql ;do chkconfig $i on ;done
-echo -e "0 0 */3 * * rm -rf /home/kunshi/license/license.dat\n01 01 * * * /etc/init.d/iptables restart" >> /var/spool/cron/root
-
+echo -e '00 10 * * * root /usr/sbin/ntpdate -u cn.pool.ntp.org > /dev/null 2>&1; /sbin/hwclock -w \
+0 0 */3 * * rm -rf /home/kunshi/license/license.dat \
+01 01 * * * /etc/init.d/iptables restart' \
+>> /var/spool/cron/root
+hwclock -s	#硬件时间同步到系统
+hwclock -w  #系统时间同步到硬件
 
 tee /etc/sysconfig/iptables <<-'EOF'
 #iptables
