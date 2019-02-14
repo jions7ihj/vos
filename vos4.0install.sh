@@ -311,6 +311,9 @@ sh vossecurity.bin
 mysqladmin -u root password "xiaofan@1"
 sed -i '/^Listen/cListen 10000'  /etc/httpd/conf/httpd.conf
 
+#判断ip是否是公网地址
+sed -i '/^SS_VIRTUAL_IPS=/cSS_VIRTUAL_IPS=172.26.91.204:47.92.234.83' /home/kunshi/mbx3000/etc/params.conf
+
 #如果是centos6.5安装denyhosts需要python安装命令如下
 wget http://nchc.dl.sourceforge.net/project/denyhosts/denyhosts/2.6/DenyHosts-2.6.tar.gz
 tar xf DenyHosts-2.6.tar.gz
